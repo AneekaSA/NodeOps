@@ -1,9 +1,9 @@
----
 - name: Clone Node.js project
   git:
     repo: "https://github.com/kiranrajeev1/NodeOps.git"
     dest: "/home/ubuntu/my-node-app"
     version: main
+  become: yes
 
 - name: Change ownership to ubuntu
   file:
@@ -12,22 +12,25 @@
     owner: ubuntu
     group: ubuntu
     recurse: yes
+  become: yes
 
 - name: Build Docker image
   community.docker.docker_image:
+    name: node-app
+    tag: latest
     build:
       path: /home/ubuntu/my-node-app
-    name: node-app
+      dockerfile: Dockerfile
     state: present
   become: yes
 
 - name: Run Docker container
-  docker_container:
+  community.docker.docker_container:
     name: node-app
-    image: node-app
+    image: node-app:latest
     state: started
     restart_policy: always
     ports:
       - "80:3000"
     env_file: /home/ubuntu/my-node-app/.env
-
+  become: yes
