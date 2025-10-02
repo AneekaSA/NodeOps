@@ -33,5 +33,9 @@
     restart_policy: always
     ports:
       - "80:3000"
-    env_file: /home/ubuntu/my-node-app/.env
+    env:
+      PORT: "3000"
+      SECRET_MESSAGE: "This is my secret message"
+      USERNAME: "kiran"
+      PASSWORD: "kiran"
   become: yes
