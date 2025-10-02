@@ -30,7 +30,6 @@ __pycache__/
 roles/*/tasks/main.yml~  # ignore backup files
 # optional: ignore all sensitive local files
 ansible.cfg
-inventory.ini
 
 # Docker
 *.env
