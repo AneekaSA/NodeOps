@@ -6,11 +6,11 @@ on:
       - main
 
 jobs:
-  build-test:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Setup Node.js
@@ -24,6 +24,5 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Build Docker image locally
-        run: docker build -t node-app-ci .
-
+      - name: Build project
+        run: npm run build
