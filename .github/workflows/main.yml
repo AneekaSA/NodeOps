@@ -31,7 +31,6 @@ jobs:
   ansible:
     name: Ansible Deploy
     runs-on: ubuntu-latest
-    needs: terraform   # runs only after Terraform succeeds
     env:
       ANSIBLE_HOST_KEY_CHECKING: 'False'
       PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
