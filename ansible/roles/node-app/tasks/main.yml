@@ -20,7 +20,7 @@
     tag: latest
     build:
       path: /home/ubuntu/my-node-app
-      dockerfile: Dockerfile
+      dockerfile: "Dockerfile"
     state: present
   become: yes
 
