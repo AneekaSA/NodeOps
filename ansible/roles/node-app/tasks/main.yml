@@ -1,0 +1,31 @@
+---
+- name: Clone Node.js project
+  git:
+    repo: "https://github.com/yourusername/your-node-app.git"
+    dest: "/home/ec2-user/my-node-app"
+    version: main
+
+- name: Change ownership to ec2-user
+  file:
+    path: "/home/ec2-user/my-node-app"
+    state: directory
+    owner: ec2-user
+    group: ec2-user
+    recurse: yes
+
+- name: Build Docker image
+  docker_image:
+    path: /home/ec2-user/my-node-app
+    name: node-app
+    state: present
+
+- name: Run Docker container
+  docker_container:
+    name: node-app
+    image: node-app
+    state: started
+    restart_policy: always
+    ports:
+      - "80:3000"
+    env_file: /home/ec2-user/my-node-app/.env
+

@@ -1,0 +1,10 @@
+---
+- name: Setup EC2 server for Node.js project
+  hosts: app-server
+  become: yes
+  roles:
+    - common      # system updates & packages
+    - docker      # install Docker
+    - node-app    # clone project repo
+    - docker-app  # build & run container
+

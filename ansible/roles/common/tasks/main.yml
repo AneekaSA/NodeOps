@@ -1,0 +1,12 @@
+---
+- name: Update all packages
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Install common packages
+  apt:
+    name:
+      - git
+      - python3-pip
+    state: present

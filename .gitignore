@@ -1,0 +1,46 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-error.log*
+dist/
+.env
+
+# Logs
+logs/
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+terraform.tfvars
+override.tf
+override.tf.json
+*.backup
+
+# Ansible
+*.retry
+*.vault
+*.pyc
+__pycache__/
+roles/*/tasks/main.yml~  # ignore backup files
+# optional: ignore all sensitive local files
+ansible.cfg
+inventory.ini
+
+# Docker
+*.env
+docker-compose.override.yml
+*.tar
+*.log
+
+# GitHub Actions
+.github/workflows/*.bak
+
+# IDEs
+.vsco
+

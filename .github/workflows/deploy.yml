@@ -1,0 +1,38 @@
+name: Deploy Node.js App via Ansible
+
+on:
+  workflow_run:
+    workflows: ["Terraform Apply", "Node.js CI"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    env:
+      REMOTE_USER: ec2-user
+      REMOTE_HOST: ${{ secrets.EC2_PUBLIC_IP }}
+      SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Ansible & dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y ansible rsync python3-pip
+          pip3 install docker docker-compose
+
+      - name: Deploy with Ansible
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ env.REMOTE_HOST }}
+          username: ${{ env.REMOTE_USER }}
+          key: ${{ env.SSH_KEY }}
+          port: 22
+          script: |
+            cd /home/ec2-user/ansible
+            ansible-playbook playbook.yml -i inventory.ini
+
