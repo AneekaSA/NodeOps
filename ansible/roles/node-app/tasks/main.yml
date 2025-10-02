@@ -14,6 +14,12 @@
     recurse: yes
   become: yes
 
+- name: Ensure old container is stopped
+  docker_container:
+    name: node-app
+    state: absent
+    force_kill: yes
+
 - name: Build Docker image
   community.docker.docker_image:
     name: node-app
@@ -38,4 +44,4 @@
       SECRET_MESSAGE: "This is my secret message"
       USERNAME: "kiran"
       PASSWORD: "kiran"
-  become: yes
+  become: yes 
