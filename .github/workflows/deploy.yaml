@@ -9,39 +9,54 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      # Step 1: Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Deploy to server over SSH and build/run
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: ${{ secrets.SERVER_IP }}
-        username: ec2-user
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
-        script: |
-          set -e
-          cd /home/ec2-user
-          if [ -d app-src ]; then
-            cd app-src
-            git fetch --all
-            git reset --hard origin/main
-          else
-            git clone https://github.com/${{ github.repository }}.git app-src
-            cd app-src
-          fi
+      # Step 2: Deploy to EC2 over SSH
+      - name: Deploy to server and build/run Docker
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ec2-user
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            set -e
 
-          # write .env from GitHub Secrets (server-side file, NOT committed)
-          cat > /home/ec2-user/app-src/.env <<'EOF'
-USERNAME=admin
-PASSWORD=admin123
-SECRET_MESSAGE=secretmessage
-PORT=3000
-EOF
+            # Navigate to home
+            cd /home/ec2-user
 
-          cd /home/ec2-user/app-src
+            # Clone or update repo
+            if [ -d app-src ]; then
+              cd app-src
+              git fetch --all
+              git reset --hard origin/main
+            else
+              git clone https://github.com/${{ github.repository }}.git app-src
+              cd app-src
+            fi
 
-          # build and run (use sudo to be safe)
-          sudo docker build -t node-basic-auth:latest .
-          sudo docker rm -f node-basic-auth || true
-          sudo docker run -d --name node-basic-auth --restart unless-stopped -p 80:3000 --env-file /home/ec2-user/app-src/.env node-basic-auth:latest
+            # Write .env from GitHub Secrets
+            cat > /home/ec2-user/app-src/.env <<EOF
+            USERNAME=${{ secrets.APP_USERNAME }}
+            PASSWORD=${{ secrets.APP_PASSWORD }}
+            SECRET_MESSAGE=${{ secrets.SECRET_MESSAGE }}
+            PORT=3000
+            EOF
+
+            cd /home/ec2-user/app-src
+
+            # Build Docker image
+            sudo docker build -t node-basic-auth:latest .
+
+            # Remove existing container if exists
+            sudo docker rm -f node-basic-auth || true
+
+            # Run container
+            sudo docker run -d \
+              --name node-basic-auth \
+              --restart unless-stopped \
+              -p 80:3000 \
+              --env-file /home/ec2-user/app-src/.env \
+              node-basic-auth:latest
