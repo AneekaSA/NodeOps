@@ -6,5 +6,4 @@
     - common      # system updates & packages
     - docker      # install Docker
     - node-app    # clone project repo
-    - docker-app  # build & run container
 
