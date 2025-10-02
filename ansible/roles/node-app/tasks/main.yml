@@ -14,10 +14,12 @@
     recurse: yes
 
 - name: Build Docker image
-  docker_image:
-    path: /home/ubuntu/my-node-app
+  community.docker.docker_image:
+    build:
+      path: /home/ubuntu/my-node-app
     name: node-app
     state: present
+  become: yes
 
 - name: Run Docker container
   docker_container:
