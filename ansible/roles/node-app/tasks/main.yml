@@ -18,8 +18,9 @@
   community.docker.docker_image:
     name: node-app
     tag: latest
+    source: build        # 👈 explicitly tell Ansible to build
     build:
-      path: /home/ubuntu/my-node-app
+      path: "/home/ubuntu/my-node-app"
       dockerfile: "Dockerfile"
     state: present
   become: yes
